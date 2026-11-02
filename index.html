@@ -1,0 +1,172 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Perpustakaan Umum</title>
+    <style>
+      body {
+        font-family: Arial;
+        background: #f5f5f7;
+        margin: 0;
+      }
+      .header {
+        background: #1a73e8;
+        color: white;
+        padding: 20px;
+      }
+      .header h1 {
+        margin: 0;
+      }
+      .search {
+        margin: 15px;
+        padding: 12px;
+        width: 90%;
+        border-radius: 15px;
+        border: 1px solid #ddd;
+      }
+      .chip {
+        display: inline-block;
+        padding: 8px 15px;
+        margin: 5px;
+        border-radius: 20px;
+        background: white;
+        border: 1px solid #ddd;
+        cursor: pointer;
+      }
+      .chip.active {
+        background: #1a73e8;
+        color: white;
+      }
+      .card {
+        background: white;
+        margin: 10px;
+        padding: 15px;
+        border-radius: 15px;
+        display: flex;
+        gap: 15px;
+      }
+      .cover {
+        width: 60px;
+        height: 80px;
+        background: #e8f0fe;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 8px;
+      }
+      .btn {
+        background: #1a73e8;
+        color: white;
+        border: none;
+        padding: 8px 15px;
+        border-radius: 10px;
+        cursor: pointer;
+      }
+      .stok {
+        padding: 4px 10px;
+        border-radius: 8px;
+        color: white;
+        font-size: 12px;
+      }
+      .hijau {
+        background: #0f9d58;
+      }
+      .merah {
+        background: #db4437;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      class="header"
+      style="display: flex; justify-content: space-between; align-items: center"
+    >
+      <div>
+        <h1>Perpustakaan Umum</h1>
+        <p>Cari, Pinjam, Baca - Offline</p>
+      </div>
+      <a
+        href="/dashboard"
+        style="
+          background: white;
+          color: #1a73e8;
+          padding: 10px 18px;
+          border-radius: 10px;
+          text-decoration: none;
+          font-weight: bold;
+        "
+        >📊 Dashboard</a
+      >
+    </div>
+    <input
+      id="cari"
+      class="search"
+      placeholder="🔍 Cari judul, penulis..."
+      oninput="render()"
+    />
+
+    <div style="padding: 0 10px">
+      <span class="chip active" onclick="filterKat('Semua', this)">Semua</span>
+      <span class="chip" onclick="filterKat('Novel', this)">Novel</span>
+      <span class="chip" onclick="filterKat('Pelajaran', this)">Pelajaran</span>
+      <span class="chip" onclick="filterKat('Sejarah', this)">Sejarah</span>
+      <span class="chip" onclick="filterKat('Teknologi', this)">Teknologi</span>
+    </div>
+
+    <div id="list"></div>
+
+    <script>
+      let kat = "Semua";
+      let buku = [
+        { j: "Laskar Pelangi", p: "Andrea Hirata", k: "Novel", s: 5 },
+        { j: "Bumi Manusia", p: "Pramoedya", k: "Novel", s: 2 },
+        {
+          j: "Algoritma Pemrograman",
+          p: "Rinaldi Munir",
+          k: "Teknologi",
+          s: 8,
+        },
+        { j: "Sejarah Indonesia", p: "Ricklefs", k: "Sejarah", s: 0 },
+        { j: "Matematika SMA", p: "Kang Dedi", k: "Pelajaran", s: 12 },
+      ];
+
+      function filterKat(k, el) {
+        kat = k;
+        document
+          .querySelectorAll(".chip")
+          .forEach((c) => c.classList.remove("active"));
+        el.classList.add("active");
+        render();
+      }
+
+      function pinjam(i) {
+        if (buku[i].s > 0) {
+          buku[i].s--;
+          alert("Berhasil pinjam: " + buku[i].j);
+          render();
+        }
+      }
+
+      function render() {
+        let q = document.getElementById("cari").value.toLowerCase();
+        let html = "";
+        buku.forEach((b, i) => {
+          if ((kat == "Semua" || b.k == kat) && b.j.toLowerCase().includes(q)) {
+            let status =
+              b.s > 0
+                ? `<span class="stok hijau">Tersedia: ${b.s}</span>`
+                : `<span class="stok merah">Dipinjam</span>`;
+            let btn =
+              b.s > 0
+                ? `<button class="btn" onclick="pinjam(${i})">PINJAM</button>`
+                : `<button class="btn" disabled>HABIS</button>`;
+            html += `<div class="card"><div class="cover">📚</div><div style="flex:1"><b>${b.j}</b><br><small>${b.p} - ${b.k}</small><br><br>${status}</div><div>${btn}</div></div>`;
+          }
+        });
+        document.getElementById("list").innerHTML = html;
+      }
+      render();
+    </script>
+  </body>
+</html>
